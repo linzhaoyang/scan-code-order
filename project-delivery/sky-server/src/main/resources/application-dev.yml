@@ -1,0 +1,33 @@
+sky:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    host: 124.221.224.159
+    port: 3306
+    database: sky_take_out
+    username: root
+    password: Zz11023754
+  redis:
+    host: 124.221.224.159
+    port: 6379
+    #    password: Aa123456
+    database: 10
+  wechat:
+    appid: wxe7cc7a2c434b978a   #小程序appid
+    secret: 6f14d3e77be13dd79771d391c0193a22   #小程序密钥
+    mchid : 1561414331 #商户号
+    mchSerialNo: 4B3B3DC35414AD50B1B755BAF8DE9CC7CF407606   #商户api证书的证书序列号
+    privateKeyFilePath: D:\pay\apiclient_key.pem  #商户私钥文件
+    apiV3Key: CZBK51236435wxpay435434323FFDuv3  #证书解密密钥
+    weChatPayCertFilePath: D:\pay\wechatpay_166D96F876F45C7D07CE98952A96EC980368ACFC.pem  #平台证书
+    notifyUrl: https://58869fb.r2.cpolar.top/notify/paySuccess  #支付成功的回调地址
+    refundNotifyUrl: https://58869fb.r2.cpolar.top/notify/refundSuccess  #退款成功的回调地址
+
+minio:
+  endpoint: http://124.221.224.159:9000
+  accessKey: jxX7szlHnjeT7a1ZLOyO
+  secretKey: lC6AmGINQNZ1qdyQRan6eLZSDZdgRXNR96LT5Ntn
+
+  local: http://124.221.224.159:9000/linzhaoyan/
+  bucket:
+    files: linzhaoyan
+    videofiles: video

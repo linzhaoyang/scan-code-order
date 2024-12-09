@@ -1,0 +1,33 @@
+# Build and Release Folders
+bin-debug/
+bin-release/
+[Oo]bj/
+[Bb]in/
+
+# Other files and folders
+.settings/
+
+# Executables
+*.swf
+*.air
+*.ipa
+*.apk
+*.iml
+
+# Project files, i.e. `.project`
+.idea/
+logs/
+target/
+.idea
+target
+logs
+.project
+.apt_generated
+.springBeans
+.classpath
+.factorypath
+data/
+*.log
+
+# CI/CD
+.gitlab-ci.yml

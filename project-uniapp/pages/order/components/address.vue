@@ -1,0 +1,230 @@
+<!--地址-->
+<template>
+  <view class="container new_address">
+    <!-- 送达时间 -->
+    <view class="bottom">
+      <div class="bottomTime" @click="openTimePopuo('bottom')">
+        <text class="time_name_disabled">立即出餐</text>
+        <view class="address_image">
+          <text class="">{{ arrivalTime }}完成</text>
+          <view class="to_right"></view>
+        </view>
+      </div>
+      <view v-if="address" class="infoTip"
+        >因订单较多，完成时间可能波动</view>
+    </view>
+    <!--预留电话-->
+    <view class="reservedPhone">
+      <div>
+        <text class="phone">预留电话</text>
+        <view v-if="errorMessage" class="infoTip">{{ errorMessage }}</view>
+      </div>
+      <input class="input-phone"  :placeholder=phoneNumber @input="onKeyInput" type="tel" maxlength="11" @blur="validatePhoneNumber"/>
+      
+    </view>
+    <view class="select">
+      <text class="time_name_disabled">请选择就餐方式</text>
+    <!-- 创建一个 radio 组 -->
+    <radio-group @change="radioChange" class="radio-group">
+      <!-- 单个单选框 -->
+      <label class="radio-label">
+        <radio value=0 checked="true" color="#FFCC33" style="transform:scale(0.7)" />堂食
+      </label>
+
+      <label class="radio-label">
+        <radio value=1 color="#FFCC33" style="transform:scale(0.7)" />打包
+      </label>
+    </radio-group>
+  </view>
+    <!-- end -->
+    <!-- 时间弹层 -->
+    <uni-popup ref="timePopup" @change="change" class="popupBox">
+      <view class="popup-content">
+        <view class="pickerCon">
+          <view class="dayBox">
+            <scroll-view
+              scroll-x="true"
+              :scroll-into-view="scrollinto"
+              :scroll-with-animation="true"
+            >
+              <view
+                v-for="(item, index) in popleft"
+                :key="index"
+                :id="'tab' + index"
+                class="scroll-row-item"
+                @click="dateChange(index)"
+              >
+                <view v-for="(val, i) in weeks" :key="i">
+                  <view
+                    :class="tabIndex == index ? 'scroll-row-day' : ''"
+                    v-if="index === i"
+                    ><text class="line"></text>{{ item
+                    }}<text class="week">({{ val }})</text></view
+                  >
+                </view>
+              </view>
+            </scroll-view>
+          </view>
+          <view class="timeBox">
+            <scroll-view
+              class="card_order_list"
+              scroll-y="true"
+              scroll-top="40rpx"
+            >
+              <view
+                v-for="(val, i) in newDateData"
+                :key="i"
+                class="item"
+                :class="selectValue === i ? 'city-column_select' : ''"
+                @click="timeClick(val, i)"
+                >{{ val }}</view
+              >
+            </scroll-view>
+          </view>
+        </view>
+        <view class="btns" @click="onsuer">取消</view>
+      </view>
+    </uni-popup>
+    <!-- end -->
+  </view>
+</template>
+<script>
+export default {
+  // 获取父级传的数据
+  props: {
+    // 是公司还是家里样式
+    tagLabel: {
+      type: String,
+      default: "",
+    },
+    // 是公司还是家里
+    addressLabel: {
+      type: String,
+      default: "",
+    },
+    // 地址
+    address: {
+      type: String,
+      default: "",
+    },
+    // 名称
+    nickName: {
+      type: String,
+      default: "",
+    },
+    gender: {
+      type: Number,
+      default: -1,
+    },
+    // 电话
+    phoneNumber: {
+      type: String,
+      default: "",
+    },
+    // 送达时间
+    arrivalTime: {
+      type: String,
+      default: "",
+    },
+    // 当前选中
+    tabIndex: {
+      type: Number,
+      default: 0,
+    },
+    // 当前选中的时间样式
+    selectValue: {
+      type: Number,
+      default: 0,
+    },
+    // 时间选中的左侧数据（今天、明天）
+    popleft: {
+      type: Array,
+      default: () => [],
+    },
+    // 周几
+    weeks: {
+      type: Array,
+      default: () => [],
+    },
+    // 时间段
+    newDateData: {
+      type: Array,
+      default: () => [],
+    },
+  },
+  mounted() {
+		this.validatePhoneNumber();
+	},
+  data(){
+    return{
+      diningType:0 , // 0：堂食 1：打包
+      // 国内手机号码正则表达式，仅允许11位数字
+      phoneRegex: /^1[3-9]\d{9}$/,
+      errorMessage: '',
+      phone:''
+    }
+  },
+  methods: {
+    // 地址选择
+    goAddress() {
+      this.$emit("goAddress");
+    },
+    // 送达时间弹层
+    openTimePopuo(type) {
+      this.$refs.timePopup.open(type);
+    },
+    //
+    change() {
+      this.$emit("change");
+    },
+    // 星期几选择
+    dateChange(index) {
+      this.$emit("dateChange", index);
+    },
+    // 选中时间段
+    timeClick(val, i) {
+      this.$emit("timeClick", { val: val, i: i });
+      this.onsuer();
+    },
+    // 取消时间选择
+    onsuer(type) {
+      this.$refs.timePopup.close(type);
+    },
+    //就餐方式
+    radioChange(evt) {
+				this.diningType= parseInt(evt.detail.value, 10);;
+        //console.log(this.diningType);
+        this.$emit("radioChange", this.diningType);
+			},
+      //预留电话
+    onKeyInput: function(event) {
+      //this.phone=event.target.value;
+        setTimeout(() => {
+          //console.log(event.target.value)
+          this.$emit('inputPhone',event.target.value);
+        }, 2000); // 这里延迟2秒执行
+      },
+      //手机号校验
+      validatePhoneNumber() {
+      if (!this.phoneRegex.test(this.phoneNumber)) {
+        this.errorMessage = '手机号码格式不正确';
+      } else {
+        this.errorMessage = '';
+      }
+    },
+  },
+  computed: {
+    // 万先生
+    cryptoName() {
+      if (this.$store.state.gender === 0) {
+        // 男
+        return this.nickName.charAt(0) + "先生";
+      } else {
+        // 女
+        return this.nickName.charAt(0) + "女士";
+      }
+    },
+  },
+};
+</script>
+<style src="./../style.scss" lang="scss" scoped></style>
